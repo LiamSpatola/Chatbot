@@ -8,7 +8,7 @@ speech_engine.setProperty("rate", 150)
 voices = speech_engine.getProperty('voices')
 speech_engine.setProperty("voice", voices[1].id)
 
-# Initiating spacy for natural language processing, using en-core-web-trf model.
+# Initiating spacy for natural language processing, using en-core-web-md model.
 nlp = spacy.load('en_core_web_md')
 
 # Initializing the speech recognition.
@@ -16,32 +16,29 @@ r = sr.Recognizer()
 
 
 def speak(phrase):
-    """
-    Uses pyttsx3 to convert input text to speech.
+    """Uses pyttsx3 to convert input text to speech.
 
-        Parameters:
-            phrase (str): A string for text-to-speech conversion.
-        Returns:
-            N/A
+    Parameters
+    ----------
+    phrase : str
+        A string for text-to-speech conversion.
     """
+
     speech_engine.say(phrase)
     speech_engine.runAndWait()
 
 
 def listen():
-    """
-    Uses speech_recognition to recognise a spoken phrase from the microphone with pyaudio.
+    """Uses speech_recognition to recognise a spoken phrase from the microphone with pyaudio.
 
-        Parameters:
-            N/A
-        Returns:
-            EITHER:
-                text (str): The recognised spoken phrase.
-            OR:
-                "Speech not recognised.": If speech could not be recognised.
-            OR:
-                f"Could not request results from service; {e}": If speech-to-text service has malfunctioned.
+    Returns
+    -------
+    str
+        If speech is successfully recognised, returns recognised speech;
+        If speech is not recognised, returns "Speech not recognised.";
+        If speech recognition service causes an issue, returns "Could not request results from service; <error message>".
     """
+
     with sr.Microphone() as source:
         audio = r.listen(source)
         try:
@@ -54,17 +51,20 @@ def listen():
 
 
 def get_person(phrase):
-    """
-    Returns a person (if found) in a phrase
+    """Returns a person (if found) in a phrase
 
-        Parameters:
-            phrase (str): A phrase or sentence in english.
-        Returns:
-            EITHER:
-                person (str): The person in the phrase.
-            OR:
-                None: If no person is found.
+    Parameters
+    ----------
+    phrase : str
+        A phrase or sentence in english.
+
+    Returns
+    -------
+    str or None
+        If a person is found in the phrase, returns person as str;
+        If no person is found in the phrase, returns None.
     """
+
     doc = nlp(phrase)
     ent_found = False
 
@@ -78,21 +78,23 @@ def get_person(phrase):
 
 
 def get_city(phrase):
-    """
-        Returns a city (if found) in a phrase
+    """Returns a city (if found) in a phrase
 
-            Parameters:
-                phrase (str): A phrase or sentence in english.
-            Returns:
-                EITHER:
-                    person (str): The city in the phrase.
-                OR:
-                    None: If no city is found.
-        """
+    Parameters
+    ----------
+    phrase : str
+        A phrase or sentence in english.
+
+    Returns
+    -------
+    str or None
+        If a city is found in the phrase, returns city as str;
+        If no city is found in the phrase, returns None.
+    """
+    
     doc = nlp(phrase)
     ent_found = False
 
-    # TODO: Fix city recognition
     for entity in doc.ents:
         if entity.label_ == "GPE":
             ent_found = True
@@ -103,6 +105,7 @@ def get_city(phrase):
 
 
 if __name__ == "__main__":
+    # Getting name from user.
     speak("Hello, I'm called Aurora, and my job is to get to know you better. Let's start with your name. "
           "What is it?")
     while True:
@@ -114,6 +117,7 @@ if __name__ == "__main__":
             speak(f"It's lovely to meet you {name}")
             break
 
+    # Getting city from user.
     speak("It would also be lovely to know what city you live in. Where do you live?")
     while True:
         city = get_city(listen())
@@ -124,4 +128,5 @@ if __name__ == "__main__":
             speak(f"{city} is a lovely city. I want to go there one day!")
             break
 
+    # Saying goodbye to user.
     speak(f"It was nice meeting you {name}. Goodbye!")
