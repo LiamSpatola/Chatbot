@@ -136,6 +136,9 @@ from main import get_city
 city = get_city("I live in New York.")
 ```
 
+## Security
+This project will no longer recieve security updates. Please ensure you check all dependencies for updates and security.
+
 
 ## Author
 [LiamSpatola](https://github.com/LiamSpatola)
